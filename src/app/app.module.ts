@@ -1,25 +1,30 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { IonicApp, IonicErrorHandler, IonicModule, ModalController } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { ErrorComponent } from '../pages/error/error';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    CommonModule,
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    ErrorComponent,
   ],
   providers: [
     StatusBar,
@@ -27,4 +32,14 @@ import { HomePage } from '../pages/home/home';
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(modalCtrl: ModalController, errorHandler: ErrorHandler) {
+    window.addEventListener('error', (error) => {
+      modalCtrl.create(ErrorComponent, {
+        error,
+      }).present();
+      errorHandler.handleError(error);
+    })
+
+  }
+}
